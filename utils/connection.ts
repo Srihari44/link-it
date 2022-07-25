@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { nanoid } from "nanoid";
-
+import { ShortLinkModel } from "./model";
 const { DATABASE_URL } = process.env;
 
 export const connect = async () => {
@@ -8,22 +7,8 @@ export const connect = async () => {
     .connect(DATABASE_URL as string)
     .catch((err) => console.log(err));
 
-  const ShortLinkSchema = new mongoose.Schema({
-    full: {
-      type: String,
-      required: true,
-    },
-    short: {
-      type: String,
-      default: () => nanoid(7),
-    },
-    clicks: {
-      type: Number,
-      default: 0,
-    },
-    date: { type: Date, default: Date.now },
-  });
-
+  const ShortLinkSchema = new mongoose.Schema(ShortLinkModel);
+  ShortLinkSchema.index({ expire_at: 1 }, { expireAfterSeconds: 0 });
   const ShortLink =
     mongoose.models.ShortLinks || mongoose.model("ShortLinks", ShortLinkSchema);
 

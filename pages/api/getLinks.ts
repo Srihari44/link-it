@@ -1,32 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../utils/connection";
-type SuccessResponse = Array<{
-  full: string;
-  clicks: number;
-  short: string;
-  date: Date;
-}>;
 
-type ErrorResponse = {
-  error: string;
-};
-
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<SuccessResponse | ErrorResponse>
-) {
-  const handleResponse = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { ShortLink } = await connect(); // connect to database
-    res.json(
-      await ShortLink.find(
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const handleResponse = async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    promiseHandler: { resolve: Function; reject: Function }
+  ) => {
+    const { ShortLink } = await connect();
+    try {
+      const fullData = await ShortLink.find(
         {},
-        { full: 1, short: 1, date: 1, clicks: 1, _id: 0 }
-      ).catch((error: string) => res.status(400).json({ error }))
-    );
+        { full: 1, short: 1, expire_at: 1, clicks: 1, _id: 0 }
+      );
+      res.json(fullData);
+      promiseHandler.resolve(true);
+    } catch (error) {
+      res.status(400).json({ error });
+      promiseHandler.reject(error);
+    }
   };
-  if (req.method === "GET") {
-    handleResponse(req, res);
-  } else {
-    res.status(400).json({ error: "Invalid Request" });
-  }
+  return new Promise((resolve, reject) => {
+    if (req.method === "GET") {
+      handleResponse(req, res, { resolve, reject });
+    } else {
+      res.status(400).json({ error: "Invalid Request" });
+      resolve(true);
+    }
+  });
 }
