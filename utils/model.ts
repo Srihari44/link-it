@@ -10,6 +10,7 @@ export const ShortLinkModel = {
   short: {
     type: SchemaTypes.String,
     default: () => nanoid(7),
+    unique: true,
   },
   clicks: {
     type: SchemaTypes.Number,

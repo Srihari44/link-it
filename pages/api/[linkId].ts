@@ -20,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         promiseHandler.resolve(true);
       } else {
         res.status(404).json({ error: "Not found" });
-        promiseHandler.reject(error);
+        promiseHandler.resolve(true);
       }
     } catch (error) {
       res.status(400).json({ error });

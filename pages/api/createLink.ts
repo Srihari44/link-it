@@ -7,7 +7,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res: NextApiResponse,
     promiseHandler: { resolve: Function; reject: Function }
   ) => {
-    const { ShortLink } = await connect(); // connect to database
+    const { ShortLink } = await connect();
     try {
       const fullData = await ShortLink.create(JSON.parse(req.body));
       res.json({ short: fullData.short });
