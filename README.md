@@ -6,7 +6,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Instructions
 
-**First configure mongodb server url in env files**
+**First configure mongodb server url in env files and start mongodb server**
 
 For development, run
 
